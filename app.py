@@ -5,7 +5,7 @@ import time
 import random
 import ast
 
-# --- CONFIGURAÇÃO DA PÁGINA ---
+
 st.set_page_config(
     page_title="Giftly",
     page_icon="🎁",
@@ -13,7 +13,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- ESTILIZAÇÃO CSS (VISUAL FULL APP) ---
+
 st.markdown("""
 <style>
     /* 1. FUNDO GERAL (Cobre tudo) */
@@ -63,7 +63,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# --- ESTADO ---
+
 if 'logado' not in st.session_state: st.session_state.logado = False
 if 'usuario_nome' not in st.session_state: st.session_state.usuario_nome = ""
 if 'historico' not in st.session_state: st.session_state.historico = []
@@ -76,7 +76,7 @@ except FileNotFoundError:
     st.error("⚠️ Chave de API não encontrada.")
     st.stop()
 
-# --- AUXILIARES ---
+
 def gerar_interesses_aleatorios():
     perfis = [
         "Gosta de café gourmet, ler livros de suspense e gatos.",
@@ -87,7 +87,7 @@ def gerar_interesses_aleatorios():
     ]
     st.session_state.txt_interesses = random.choice(perfis)
 
-# --- LOGIN ---
+
 def tela_login():
     c1, c2, c3 = st.columns([1, 2, 1])
     with c2:
@@ -108,7 +108,7 @@ def tela_login():
                 st.session_state.usuario_nome = nome
                 st.rerun()
 
-# --- APP PRINCIPAL ---
+
 def app_principal():
     # --- HEADER ---
     col_header_esq, col_header_dir = st.columns([1, 1])
@@ -162,7 +162,7 @@ def app_principal():
     with c_input:
         interesses = st.text_area("", height=80, key="txt_interesses", placeholder="Ex: Gosta de rock, cozinhar e tecnologia...")
 
-    # --- BOTÃO AÇÃO ---
+    
     if st.button("✨ BUSCAR PRESENTES", use_container_width=True):
         if not interesses or not quem:
             st.warning("⚠️ Preencha os interesses e quem é a pessoa.")
