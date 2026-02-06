@@ -15,8 +15,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# --- SEGURANÇA DA CHAVE (O PULO DO GATO) ---
-# Tenta pegar a chave do cofre do Streamlit (funciona local e na nuvem)
+
 try:
     MINHA_API_KEY = st.secrets["MINHA_API_KEY"]
 except FileNotFoundError:
@@ -33,12 +32,17 @@ with c2:
 st.markdown("---")
 
 # --- BARRA LATERAL ---
+# --- BARRA LATERAL ---
 with st.sidebar:
     st.header("📝 Perfil")
     quem = st.text_input("Quem é?", placeholder="Ex: Namorada, Pai...")
     idade = st.number_input("Idade:", 0, 120, 25)
-    ocasiao = st.selectbox("Ocasião:", ["Aniversário", "Natal", "Dia dos Namorados", "Amigo Secreto", "Outro"])
-    orcamento = st.slider("Orçamento (R$):", 50, 2000, 200)
+    
+    ocasiao = st.selectbox("Ocasião:", 
+                           ["Aniversário", "Natal", "Dia dos Namorados", "Amigo Secreto", "Outro"])
+    
+    orcamento = st.number_input("Orçamento Máximo (R$):", min_value=0.0, step=50.0, value=200.0)
+    
     st.markdown("---")
     botao_gerar = st.button("🚀 Encontrar Presentes")
 
