@@ -28,7 +28,7 @@ with c1:
     st.image("https://cdn-icons-png.flaticon.com/512/4213/4213650.png", width=80)
 with c2:
     st.title("Giftly")
-    st.write("Encontre o presente perfeito em segundos com IA.")
+    st.write("Encontre o presente perfeito em segundos com a Giftly.")
 st.markdown("---")
 
 # --- BARRA LATERAL ---
