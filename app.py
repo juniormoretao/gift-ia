@@ -16,45 +16,51 @@ st.set_page_config(
 
 st.markdown("""
 <style>
-    /* 1. FUNDO GERAL (Cobre tudo) */
+    /* 1. CONFIGURAÇÕES GERAIS */
     .stApp {
         background: linear-gradient(to right, #f8f9fa, #e9ecef);
-    }
-
-    /* 2. SUMIR COM A FAIXA BRANCA DO TOPO (Header do Streamlit) */
-    header[data-testid="stHeader"] {
-        background-color: transparent;
-        z-index: 1; /* Fica atrás do nosso conteúdo se precisar */
+        color: #333333; /* Força cor da fonte escura */
     }
     
-    /* Esconde a linha colorida de decoração no topo */
-    div[data-testid="stDecoration"] {
-        visibility: hidden;
-        height: 0px;
-    }
+    /* 2. CABEÇALHO LIMPO */
+    header[data-testid="stHeader"] { background-color: transparent; z-index: 1; }
+    div[data-testid="stDecoration"] { visibility: hidden; height: 0px; }
+    .block-container { padding-top: 2rem; padding-bottom: 1rem; }
 
-    /* 3. AJUSTE DO CONTEÚDO PARA SUBIR (Ocupar o lugar da faixa) */
-    .block-container {
-        padding-top: 2rem; /* Espaço mínimo apenas para não cortar o logo */
-        padding-bottom: 1rem;
+    /* 3. BOTÕES PRINCIPAIS (Laranja/Vermelho) */
+    .stButton>button { 
+        background: linear-gradient(45deg, #FF4B4B, #FF914D); 
+        color: white; 
+        border-radius: 20px; 
+        height: 45px; 
+        font-weight: bold; 
+        border: none; 
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
     }
-
-    /* 4. VISUAL DOS CARDS E BOTÕES (MANTIDO) */
-    div[data-testid="stExpander"] { background-color: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border: none; }
+    .stButton>button:hover { 
+        transform: scale(1.02); 
+        box-shadow: 0 6px 12px rgba(255, 75, 75, 0.3); 
+        color: white;
+    }
     
-    .stButton>button { background: linear-gradient(45deg, #FF4B4B, #FF914D); color: white; border-radius: 20px; height: 45px; font-weight: bold; border: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-    .stButton>button:hover { transform: scale(1.02); box-shadow: 0 6px 12px rgba(255, 75, 75, 0.3); }
-    
-    /* Botão Sair Discreto */
+    /* 4. BOTÃO SAIR (CORRIGIDO PARA NÃO SUMIR) */
     div[data-testid="stVerticalBlockBorderWrapper"] .botao-sair-container button {
-        background: #e9ecef !important; color: #555 !important; border: 1px solid #ccc !important;
-        height: 32px !important; font-size: 13px !important; border-radius: 8px !important; box-shadow: none !important;
+        background-color: #ffffff !important; /* Fundo BRANCO para destacar do cinza */
+        color: #555 !important; 
+        border: 1px solid #ddd !important;
+        height: 32px !important; 
+        font-size: 13px !important; 
+        border-radius: 8px !important; 
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05) !important; /* Sombra leve */
     }
     div[data-testid="stVerticalBlockBorderWrapper"] .botao-sair-container button:hover {
-        background: #dee2e6 !important; color: #FF4B4B !important;
+        background-color: #fff0f0 !important; /* Fundo rosado leve ao passar o mouse */
+        color: #FF4B4B !important;
+        border-color: #FF4B4B !important;
     }
 
-    /* Preço Destaque */
+    /* 5. CARDS E PREÇO */
+    div[data-testid="stExpander"] { background-color: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border: none; }
     .preco-destaque {
         color: #198754; font-weight: 800; font-size: 1.2rem;
         background-color: #e8f5e9; padding: 5px 10px; border-radius: 8px;
