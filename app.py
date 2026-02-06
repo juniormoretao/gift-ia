@@ -13,33 +13,45 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- ESTILIZAÇÃO CSS (VISUAL PREMIUM) ---
+# --- ESTILIZAÇÃO CSS (VISUAL FULL APP) ---
 st.markdown("""
 <style>
-    /* Remove espaço extra do topo */
-    .block-container { padding-top: 1rem; padding-bottom: 1rem; }
-    .stApp { background: linear-gradient(to right, #f8f9fa, #e9ecef); }
+    /* 1. FUNDO GERAL (Cobre tudo) */
+    .stApp {
+        background: linear-gradient(to right, #f8f9fa, #e9ecef);
+    }
+
+    /* 2. SUMIR COM A FAIXA BRANCA DO TOPO (Header do Streamlit) */
+    header[data-testid="stHeader"] {
+        background-color: transparent;
+        z-index: 1; /* Fica atrás do nosso conteúdo se precisar */
+    }
     
-    /* Cards */
+    /* Esconde a linha colorida de decoração no topo */
+    div[data-testid="stDecoration"] {
+        visibility: hidden;
+        height: 0px;
+    }
+
+    /* 3. AJUSTE DO CONTEÚDO PARA SUBIR (Ocupar o lugar da faixa) */
+    .block-container {
+        padding-top: 2rem; /* Espaço mínimo apenas para não cortar o logo */
+        padding-bottom: 1rem;
+    }
+
+    /* 4. VISUAL DOS CARDS E BOTÕES (MANTIDO) */
     div[data-testid="stExpander"] { background-color: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border: none; }
     
-    /* Botões Principais (Gradient) */
     .stButton>button { background: linear-gradient(45deg, #FF4B4B, #FF914D); color: white; border-radius: 20px; height: 45px; font-weight: bold; border: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
     .stButton>button:hover { transform: scale(1.02); box-shadow: 0 6px 12px rgba(255, 75, 75, 0.3); }
     
-    /* Botão SAIR (Estilo Minimalista/Cinza) */
+    /* Botão Sair Discreto */
     div[data-testid="stVerticalBlockBorderWrapper"] .botao-sair-container button {
-        background: #e9ecef !important;
-        color: #555 !important;
-        border: 1px solid #ccc !important;
-        height: 32px !important;
-        font-size: 13px !important;
-        border-radius: 8px !important;
-        box-shadow: none !important;
+        background: #e9ecef !important; color: #555 !important; border: 1px solid #ccc !important;
+        height: 32px !important; font-size: 13px !important; border-radius: 8px !important; box-shadow: none !important;
     }
     div[data-testid="stVerticalBlockBorderWrapper"] .botao-sair-container button:hover {
-        background: #dee2e6 !important;
-        color: #FF4B4B !important;
+        background: #dee2e6 !important; color: #FF4B4B !important;
     }
 
     /* Preço Destaque */
@@ -80,7 +92,6 @@ def tela_login():
     c1, c2, c3 = st.columns([1, 2, 1])
     with c2:
         st.markdown("<br><br>", unsafe_allow_html=True)
-        # Logo e Título centralizados via HTML
         st.markdown("""
             <div style="text-align: center;">
                 <img src="https://cdn-icons-png.flaticon.com/512/4213/4213650.png" width="80" style="margin-bottom: 10px;">
@@ -99,12 +110,10 @@ def tela_login():
 
 # --- APP PRINCIPAL ---
 def app_principal():
-    # --- HEADER PROFISSIONAL ---
-    # Dividimos em 2 colunas grandes: [Marca (Esq) | Usuário (Dir)]
+    # --- HEADER ---
     col_header_esq, col_header_dir = st.columns([1, 1])
     
     with col_header_esq:
-        # HTML FLEXBOX: Garante que o ícone e texto fiquem perfeitamente alinhados
         st.markdown("""
             <div style="display: flex; align-items: center;">
                 <img src="https://cdn-icons-png.flaticon.com/512/4213/4213650.png" width="50" style="margin-right: 15px;">
@@ -113,15 +122,10 @@ def app_principal():
         """, unsafe_allow_html=True)
         
     with col_header_dir:
-        # Colunas internas para alinhar o texto "Olá" e o botão "Sair"
-        # Usamos colunas vazias para empurrar tudo para a direita
         c_vazio, c_ola, c_sair = st.columns([4, 3, 2])
-        
         with c_ola:
             st.markdown(f"<div style='text-align: right; padding-top: 8px; color: #555; font-weight: 500;'>Olá, <b>{st.session_state.usuario_nome}</b>!</div>", unsafe_allow_html=True)
-        
         with c_sair:
-            # Container CSS específico para estilizar este botão como cinza
             with st.container():
                 st.markdown('<div class="botao-sair-container">', unsafe_allow_html=True)
                 if st.button("Sair ➝", key="btn_sair", use_container_width=True):
@@ -178,7 +182,6 @@ def app_principal():
                     """
                     response = model.generate_content(prompt)
                     
-                    # Tratamento JSON
                     texto = response.text
                     inicio, fim = texto.find('['), texto.rfind(']') + 1
                     if inicio != -1 and fim != -1:
