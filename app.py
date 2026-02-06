@@ -6,33 +6,52 @@ import random
 
 # --- CONFIGURAÇÃO DA PÁGINA ---
 st.set_page_config(
-    page_title="Giftly - Facilitador de Presentes",
+    page_title="Giftly - Presentes com IA",
     page_icon="🎁",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# --- ESTILIZAÇÃO CSS (Visual Tunado) ---
+# --- ESTILIZAÇÃO CSS (CORRIGIDA) ---
 st.markdown("""
 <style>
     .stApp { background: linear-gradient(to right, #f8f9fa, #e9ecef); }
-    h1 { color: #FF4B4B; text-align: center; font-family: 'Helvetica', sans-serif; font-weight: 800; }
+    
+    /* Título Giftly - Correção para não quebrar linha */
+    h1 { 
+        color: #FF4B4B; 
+        text-align: center; 
+        font-family: 'Helvetica', sans-serif; 
+        font-weight: 800;
+        white-space: nowrap; /* O Pulo do Gato: Impede quebra de linha */
+    }
+    
     .subtitle { text-align: center; color: #555; margin-bottom: 2rem; }
+    
+    /* Cards e Botões */
     div[data-testid="stExpander"] { background-color: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: none; }
     .stButton>button { background: linear-gradient(45deg, #FF4B4B, #FF914D); color: white; border-radius: 25px; height: 50px; font-weight: bold; border: none; }
     .stButton>button:hover { transform: scale(1.02); box-shadow: 0 6px 15px rgba(255, 75, 75, 0.4); }
+    
+    /* Botão Sair (Pequeno e discreto) */
+    .botao-sair > button {
+        background: #6c757d !important;
+        height: 35px !important;
+        font-size: 14px !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
-# --- GERENCIAMENTO DE ESTADO (MEMÓRIA TEMPORÁRIA) ---
+# --- GERENCIAMENTO DE ESTADO ---
 if 'logado' not in st.session_state:
     st.session_state.logado = False
 if 'usuario_nome' not in st.session_state:
     st.session_state.usuario_nome = ""
 if 'historico' not in st.session_state:
     st.session_state.historico = []
-if 'sugestao_interesses' not in st.session_state:
-    st.session_state.sugestao_interesses = ""
+# Importante: Inicializamos a chave do text_area se ela não existir
+if 'txt_interesses' not in st.session_state:
+    st.session_state.txt_interesses = ""
 
 # --- SEGURANÇA ---
 try:
@@ -41,13 +60,26 @@ except FileNotFoundError:
     st.error("⚠️ Chave de API não encontrada.")
     st.stop()
 
-# --- FUNÇÃO: TELA DE LOGIN ---
+# --- FUNÇÃO AUXILIAR: GERAR INTERESSES (CORREÇÃO DO BOTÃO) ---
+def gerar_interesses_aleatorios():
+    perfis = [
+        "Gosta de café gourmet, ler livros de suspense e gatos.",
+        "Ama tecnologia, setups de computador, luzes RGB e jogos online.",
+        "É fitness, faz crossfit, come saudável e gosta de trilhas.",
+        "Gosta de vinhos, queijos, jazz e viagens para a Europa.",
+        "Fã de Harry Potter, coleciona funkos e gosta de jogos de tabuleiro.",
+        "Adora jardinagem, plantas suculentas e decoração DIY.",
+        "Músico amador, toca violão e gosta de vinis antigos."
+    ]
+    # Atualiza DIRETAMENTE a chave do componente de texto
+    st.session_state.txt_interesses = random.choice(perfis)
+
+# --- TELA DE LOGIN ---
 def tela_login():
     c1, c2, c3 = st.columns([1, 2, 1])
     with c2:
         st.markdown("<br><br>", unsafe_allow_html=True)
         st.image("https://cdn-icons-png.flaticon.com/512/4213/4213650.png", width=120)
-        # Mude o título para:
         st.title("Bem-vindo ao Giftly")
         st.markdown("<h3 style='text-align: center;'>Seu assistente pessoal de presentes</h3>", unsafe_allow_html=True)
         
@@ -57,27 +89,32 @@ def tela_login():
             if nome:
                 st.session_state.logado = True
                 st.session_state.usuario_nome = nome
-                st.rerun() # Recarrega a página para entrar no app
+                st.rerun()
             else:
                 st.warning("Por favor, digite um nome.")
 
-# --- FUNÇÃO: APP PRINCIPAL ---
+# --- APP PRINCIPAL ---
 def app_principal():
-    
-    c_user, c_sair = st.columns([8, 1])
-    with c_user:
-        st.write(f"Olá, **{st.session_state.usuario_nome}**! 👋")
-    with c_sair:
-        if st.button("Sair"):
-            st.session_state.logado = False
-            st.session_state.historico = [] # Limpa histórico ao sair
-            st.rerun()
+    # BARRA DE NAVEGAÇÃO (User + Sair)
+    # Usamos container para separar visualmente do título
+    with st.container():
+        c_user, c_vazio, c_sair = st.columns([6, 4, 2])
+        with c_user:
+            st.markdown(f"#### Olá, {st.session_state.usuario_nome}! 👋")
+        with c_sair:
+            # Coloquei uma div para estilizar especificamente este botão se precisar
+            st.markdown('<div class="botao-sair">', unsafe_allow_html=True)
+            if st.button("Sair", key="btn_sair", use_container_width=True):
+                st.session_state.logado = False
+                st.session_state.historico = []
+                st.rerun()
+            st.markdown('</div>', unsafe_allow_html=True)
 
-    
-        st.title("🎁 Giftly")
+    # TÍTULO PRINCIPAL (Agora em linha própria para não quebrar)
+    st.title("🎁 Giftly")
     st.markdown("---")
 
-    # --- BARRA LATERAL (INPUTS + HISTÓRICO) ---
+    # --- BARRA LATERAL ---
     with st.sidebar:
         st.header("⚙️ Configuração")
         quem = st.text_input("👤 Quem vai ganhar?", placeholder="Ex: Namorada, Pai...")
@@ -86,8 +123,6 @@ def app_principal():
         orcamento = st.number_input("💰 Orçamento (R$):", min_value=0.0, step=50.0, value=200.0)
         
         st.markdown("---")
-        
-        # MOSTRAR HISTÓRICO NA SIDEBAR
         if len(st.session_state.historico) > 0:
             st.header("🕒 Histórico Recente")
             for item in reversed(st.session_state.historico):
@@ -95,27 +130,21 @@ def app_principal():
                     for sugestao in item['sugestoes']:
                         st.write(f"- {sugestao['nome']}")
 
-    # --- ÁREA DE INTERESSES + BOTÃO "SEM IDEIA" ---
+    # --- ÁREA DE INTERESSES ---
     st.subheader("Do que essa pessoa gosta?")
     
     col_text, col_dice = st.columns([4, 1])
     
     with col_dice:
-        st.write("") # Espaçamento
         st.write("") 
-        if st.button("🎲 Sem ideia?"):
-            perfis = [
-                "Gosta de café gourmet, ler livros de suspense e gatos.",
-                "Ama tecnologia, setups de computador, luzes RGB e jogos online.",
-                "É fitness, faz crossfit, come saudável e gosta de trilhas.",
-                "Gosta de vinhos, queijos, jazz e viagens para a Europa.",
-                "Fã de Harry Potter, coleciona funkos e gosta de jogos de tabuleiro."
-            ]
-            st.session_state.sugestao_interesses = random.choice(perfis)
+        st.write("") 
+        # AQUI ESTÁ A CORREÇÃO DO BOTÃO:
+        # Usamos on_click para chamar a função ANTES de recarregar a tela
+        st.button("🎲 Sem ideia?", on_click=gerar_interesses_aleatorios, use_container_width=True)
     
     with col_text:
-        # O value vem do session_state para funcionar o botão aleatório
-        interesses = st.text_area("", height=100, key="txt_interesses", value=st.session_state.sugestao_interesses, placeholder="Descreva os hobbies aqui...")
+        # A key="txt_interesses" conecta esse campo direto ao session_state
+        interesses = st.text_area("", height=100, key="txt_interesses", placeholder="Descreva os hobbies aqui ou clique no dado ao lado...")
 
     st.markdown("<br>", unsafe_allow_html=True)
     botao_gerar = st.button("✨ ENCONTRAR PRESENTES PERFEITOS")
@@ -150,14 +179,12 @@ def app_principal():
                         sugestoes = json.loads(texto_limpo)
                         status.update(label="Concluído!", state="complete", expanded=False)
 
-                        # SALVAR NO HISTÓRICO
                         st.session_state.historico.append({
                             "quem": quem,
                             "sugestoes": sugestoes,
                             "data": time.strftime("%H:%M")
                         })
 
-                        # EXIBIR CARDS
                         st.success(f"Sugestões para {quem}:")
                         c1, c2, c3 = st.columns(3)
                         
@@ -183,7 +210,7 @@ def app_principal():
             except Exception as e:
                 st.error(f"Erro: {e}")
 
-# --- CONTROLE DE FLUXO (ROTEADOR) ---
+# --- CONTROLE DE FLUXO ---
 if st.session_state.logado:
     app_principal()
 else:
