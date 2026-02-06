@@ -13,28 +13,40 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- ESTILIZAÇÃO CSS (VISUAL LIMPO) ---
+# --- ESTILIZAÇÃO CSS (VISUAL PREMIUM) ---
 st.markdown("""
 <style>
-    .block-container { padding-top: 1.5rem; padding-bottom: 1rem; }
+    /* Remove espaço extra do topo */
+    .block-container { padding-top: 1rem; padding-bottom: 1rem; }
     .stApp { background: linear-gradient(to right, #f8f9fa, #e9ecef); }
-    h1 { color: #FF4B4B; font-family: 'Helvetica', sans-serif; font-weight: 800; margin: 0; padding: 0; font-size: 2.5rem; }
-    div[data-testid="stExpander"] { background-color: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border: none; }
-    .stButton>button { background: linear-gradient(45deg, #FF4B4B, #FF914D); color: white; border-radius: 20px; height: 45px; font-weight: bold; border: none; }
-    .stButton>button:hover { transform: scale(1.02); box-shadow: 0 4px 12px rgba(255, 75, 75, 0.3); }
-    .botao-sair > button { background: #6c757d !important; height: 30px !important; font-size: 12px !important; margin-top: 10px; }
     
-    /* CSS DO PREÇO (GARANTINDO VISIBILIDADE) */
+    /* Cards */
+    div[data-testid="stExpander"] { background-color: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border: none; }
+    
+    /* Botões Principais (Gradient) */
+    .stButton>button { background: linear-gradient(45deg, #FF4B4B, #FF914D); color: white; border-radius: 20px; height: 45px; font-weight: bold; border: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .stButton>button:hover { transform: scale(1.02); box-shadow: 0 6px 12px rgba(255, 75, 75, 0.3); }
+    
+    /* Botão SAIR (Estilo Minimalista/Cinza) */
+    div[data-testid="stVerticalBlockBorderWrapper"] .botao-sair-container button {
+        background: #e9ecef !important;
+        color: #555 !important;
+        border: 1px solid #ccc !important;
+        height: 32px !important;
+        font-size: 13px !important;
+        border-radius: 8px !important;
+        box-shadow: none !important;
+    }
+    div[data-testid="stVerticalBlockBorderWrapper"] .botao-sair-container button:hover {
+        background: #dee2e6 !important;
+        color: #FF4B4B !important;
+    }
+
+    /* Preço Destaque */
     .preco-destaque {
-        color: #198754;
-        font-weight: 800;
-        font-size: 1.2rem;
-        background-color: #e8f5e9;
-        padding: 5px 10px;
-        border-radius: 8px;
-        display: inline-block;
-        margin-top: 5px;
-        margin-bottom: 10px;
+        color: #198754; font-weight: 800; font-size: 1.2rem;
+        background-color: #e8f5e9; padding: 5px 10px; border-radius: 8px;
+        display: inline-block; margin-top: 5px; margin-bottom: 10px;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -68,9 +80,15 @@ def tela_login():
     c1, c2, c3 = st.columns([1, 2, 1])
     with c2:
         st.markdown("<br><br>", unsafe_allow_html=True)
-        st.image("https://cdn-icons-png.flaticon.com/512/4213/4213650.png", width=100)
-        st.markdown("<h1 style='text-align: center; color: #333;'>Bem-vindo ao Giftly</h1>", unsafe_allow_html=True)
-        st.markdown("<p style='text-align: center; color: #666;'>Seu assistente pessoal de presentes</p>", unsafe_allow_html=True)
+        # Logo e Título centralizados via HTML
+        st.markdown("""
+            <div style="text-align: center;">
+                <img src="https://cdn-icons-png.flaticon.com/512/4213/4213650.png" width="80" style="margin-bottom: 10px;">
+                <h1 style="color: #333; margin: 0;">Bem-vindo ao Giftly</h1>
+                <p style="color: #666;">Seu assistente pessoal de presentes</p>
+            </div>
+        """, unsafe_allow_html=True)
+        st.markdown("<br>", unsafe_allow_html=True)
         
         nome = st.text_input("Como você gostaria de ser chamado?", placeholder="Seu nome...")
         if st.button("🚀 Entrar", use_container_width=True):
@@ -81,20 +99,36 @@ def tela_login():
 
 # --- APP PRINCIPAL ---
 def app_principal():
-    # HEADER
-    col_brand, col_space, col_user = st.columns([3, 4, 3])
-    with col_brand:
-        c_img, c_txt = st.columns([1, 4])
-        with c_img: st.image("https://cdn-icons-png.flaticon.com/512/4213/4213650.png", width=50)
-        with c_txt: st.markdown("<h1>Giftly</h1>", unsafe_allow_html=True)
-    with col_user:
-        st.markdown(f"<div style='text-align: right; padding-top: 10px;'><b>Olá, {st.session_state.usuario_nome}!</b> 👋</div>", unsafe_allow_html=True)
-        st.markdown('<div class="botao-sair" style="text-align: right;">', unsafe_allow_html=True)
-        if st.button("Sair", key="btn_sair"):
-            st.session_state.logado = False
-            st.session_state.historico = []
-            st.rerun()
-        st.markdown('</div>', unsafe_allow_html=True)
+    # --- HEADER PROFISSIONAL ---
+    # Dividimos em 2 colunas grandes: [Marca (Esq) | Usuário (Dir)]
+    col_header_esq, col_header_dir = st.columns([1, 1])
+    
+    with col_header_esq:
+        # HTML FLEXBOX: Garante que o ícone e texto fiquem perfeitamente alinhados
+        st.markdown("""
+            <div style="display: flex; align-items: center;">
+                <img src="https://cdn-icons-png.flaticon.com/512/4213/4213650.png" width="50" style="margin-right: 15px;">
+                <h1 style="color: #FF4B4B; margin: 0; padding: 0; font-family: Helvetica, sans-serif; font-size: 2.5rem; line-height: 1;">Giftly</h1>
+            </div>
+        """, unsafe_allow_html=True)
+        
+    with col_header_dir:
+        # Colunas internas para alinhar o texto "Olá" e o botão "Sair"
+        # Usamos colunas vazias para empurrar tudo para a direita
+        c_vazio, c_ola, c_sair = st.columns([4, 3, 2])
+        
+        with c_ola:
+            st.markdown(f"<div style='text-align: right; padding-top: 8px; color: #555; font-weight: 500;'>Olá, <b>{st.session_state.usuario_nome}</b>!</div>", unsafe_allow_html=True)
+        
+        with c_sair:
+            # Container CSS específico para estilizar este botão como cinza
+            with st.container():
+                st.markdown('<div class="botao-sair-container">', unsafe_allow_html=True)
+                if st.button("Sair ➝", key="btn_sair", use_container_width=True):
+                    st.session_state.logado = False
+                    st.session_state.historico = []
+                    st.rerun()
+                st.markdown('</div>', unsafe_allow_html=True)
 
     st.markdown("---")
 
@@ -124,15 +158,14 @@ def app_principal():
     with c_input:
         interesses = st.text_area("", height=80, key="txt_interesses", placeholder="Ex: Gosta de rock, cozinhar e tecnologia...")
 
-    # --- BOTÃO DE AÇÃO ---
+    # --- BOTÃO AÇÃO ---
     if st.button("✨ BUSCAR PRESENTES", use_container_width=True):
         if not interesses or not quem:
             st.warning("⚠️ Preencha os interesses e quem é a pessoa.")
         else:
             sugestoes = None
             try:
-                # 1. SPINNER (Gira e some, sem deixar rastro)
-                with st.spinner("🤖 A IA está pesquisando os melhores preços e opções..."):
+                with st.spinner("🤖 A IA está pesquisando..."):
                     genai.configure(api_key=MINHA_API_KEY)
                     model = genai.GenerativeModel('gemini-2.5-flash')
 
@@ -140,17 +173,14 @@ def app_principal():
                     Aja como personal shopper. Sugira 3 presentes para: {quem}, {idade} anos.
                     Ocasião: {ocasiao}. Orçamento Máximo: R$ {orcamento}.
                     Interesses: {interesses}.
-                    
                     OUTPUT JSON OBRIGATÓRIO:
-                    [
-                        {{ "nome": "Produto", "descricao": "Explicação curta", "preco_estimado": "Valor Numérico", "emoji": "🎁", "termo_busca": "Termo" }}
-                    ]
+                    [ {{ "nome": "Produto", "descricao": "Explicação curta", "preco_estimado": "Valor Numérico", "emoji": "🎁", "termo_busca": "Termo" }} ]
                     """
                     response = model.generate_content(prompt)
                     
+                    # Tratamento JSON
                     texto = response.text
                     inicio, fim = texto.find('['), texto.rfind(']') + 1
-                    
                     if inicio != -1 and fim != -1:
                         limpo = texto[inicio:fim]
                         try: sugestoes = json.loads(limpo)
@@ -159,11 +189,9 @@ def app_principal():
             except Exception as e:
                 st.error(f"Erro: {e}")
 
-            # 2. EXIBIÇÃO FORA DO SPINNER (Agora fica visível direto!)
             if sugestoes:
                 st.session_state.historico.append({"quem": quem, "sugestoes": sugestoes, "data": time.strftime("%H:%M")})
-                
-                st.success(f"Opções selecionadas para {quem}:")
+                st.success(f"Opções para {quem}:")
                 cols = st.columns(3)
                 
                 for i, item in enumerate(sugestoes):
@@ -173,9 +201,7 @@ def app_principal():
                                 st.markdown(f"#### {item['emoji']} {item['nome']}")
                                 st.caption(item['descricao'])
                                 
-                                # 3. CORREÇÃO DO CIFRÃO (R$) NO PYTHON
                                 preco_texto = str(item['preco_estimado'])
-                                # Se não tiver R$, a gente coloca
                                 if "R$" not in preco_texto and "r$" not in preco_texto:
                                     preco_final = f"R$ {preco_texto}"
                                 else:
