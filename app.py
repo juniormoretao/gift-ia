@@ -3,7 +3,7 @@ import google.generativeai as genai
 import json
 
 # --- CONFIGURAÇÃO DA PÁGINA ---
-st.set_page_config(page_title="Gift.IA", page_icon="🎁", layout="wide")
+st.set_page_config(page_title="Giftly", page_icon="🎁", layout="wide")
 
 # --- ESTILIZAÇÃO CSS ---
 st.markdown("""
@@ -27,7 +27,7 @@ c1, c2 = st.columns([1, 4])
 with c1:
     st.image("https://cdn-icons-png.flaticon.com/512/4213/4213650.png", width=80)
 with c2:
-    st.title("Gift.IA")
+    st.title("Giftly")
     st.write("Encontre o presente perfeito em segundos com IA.")
 st.markdown("---")
 
@@ -50,7 +50,7 @@ if botao_gerar:
         st.warning("⚠️ Preencha quem é a pessoa e os interesses.")
     else:
         try:
-            with st.spinner('🤖 A IA está pesquisando...'):
+            with st.spinner('Pesquisando presente ideial...'):
                 genai.configure(api_key=MINHA_API_KEY)
                 model = genai.GenerativeModel('gemini-2.5-flash')
 
